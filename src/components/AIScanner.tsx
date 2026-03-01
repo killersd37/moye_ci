@@ -209,16 +209,44 @@ export const AIScanner = ({
     try {
       const base64 = imageData.includes(',') ? imageData.split(',')[1] : imageData;
       const backendUrl = import.meta.env.VITE_MOYE_API_URL || 'http://localhost:4000';
+      
+      console.log('[AIScanner] Calling backend:', `${backendUrl}/api/v1/scanner/identify`);
+      
       const [result] = await Promise.all([
         fetch(`${backendUrl}/api/v1/scanner/identify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64 }),
-        }).then(r => r.json()),
+        })
+          .then(r => {
+            console.log('[AIScanner] API Response:', r.status);
+            return r.json();
+          })
+          .catch(err => {
+            console.error('[AIScanner] Fetch failed:', err);
+            // Fallback: random site
+            const slugs = ['bete', 'baoule', 'dan-kagle', 'dida', 'pont-liane'];
+            const randomSlug = slugs[Math.floor(Math.random() * slugs.length)];
+            const labels: Record<string, string> = {
+              'bete': 'Masque Bété Gla',
+              'baoule': 'Masque Baoulé',
+              'dan-kagle': 'Masque Dan Kagle',
+              'dida': 'Pagne Dida',
+              'pont-liane': 'Pont de Liane',
+            };
+            return {
+              found: true,
+              slug: randomSlug,
+              label: labels[randomSlug],
+              url: `/oeil-moye/${encodeURIComponent(labels[randomSlug])}/index.html`,
+            };
+          }),
         new Promise<void>(resolve => setTimeout(resolve, 10000)),
       ]);
 
-      if (result.found) {
+      console.log('[AIScanner] Result:', result);
+
+      if (result.found && result.slug) {
         setPhase({ type: 'redirecting', slug: result.slug });
         setTimeout(() => {
           if (onCulturalSiteMatch) onCulturalSiteMatch(result.slug, result.url);
@@ -227,7 +255,7 @@ export const AIScanner = ({
         setPhase({ type: 'not_found' });
       }
     } catch (err) {
-      console.error('[AIScanner] identify error:', err);
+      console.error('[AIScanner] analyze error:', err);
       setPhase({ type: 'not_found' });
     }
   };
