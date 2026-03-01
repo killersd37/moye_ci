@@ -1,0 +1,9 @@
+{
+  "name": "MOYÉ",
+  "description": "Plateforme intelligente de préservation et transmission du patrimoine culturel ivoirien.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

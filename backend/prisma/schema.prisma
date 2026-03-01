@@ -1,0 +1,472 @@
+// ================================================================
+// MOYÉ - Schéma Prisma Complet
+// Plateforme de Patrimoine Culturel Ivoirien
+// ================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ================================================================
+// MODULE 1 : UTILISATEURS & AUTH
+// ================================================================
+
+enum Role {
+  USER
+  ADMIN
+  EXPERT_CULTUREL
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  pseudo         String    @unique
+  passwordHash   String
+  firstName      String?
+  lastName       String?
+  avatar         String?
+  role           Role      @default(USER)
+  moyeOrPoints   Int       @default(0)   // Points Moyé-Or
+  streakDays     Int       @default(0)   // Jours consécutifs
+  lastActiveAt   DateTime?
+  isVerified     Boolean   @default(false)
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  messages           Message[]
+  progressions       ProgressionUtilisateur[]
+  badges             UserBadge[]
+  podcasts           Podcast[]
+  ong                ONG[]
+
+  @@map("users")
+}
+
+// ================================================================
+// MODULE 2 : DÉCOUVERTE (ETHNIES & PATRIMOINE)
+// ================================================================
+
+model Region {
+  id          String   @id @default(cuid())
+  nom         String   @unique
+  description String?
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ethnies     Ethnie[]
+
+  @@map("regions")
+}
+
+model Ethnie {
+  id               String   @id @default(cuid())
+  nom              String   @unique
+  slug             String   @unique
+  groupeLinguistique String?
+  populationEstimee Int?
+  langues          String[] // Tableau de slugs de langues
+  description      String?
+  origines         String?  @db.Text
+  imageUrl         String?
+  bannerUrl        String?
+  regionId         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  region           Region         @relation(fields: [regionId], references: [id])
+  histoires        Histoire[]
+  rites            Rite[]
+  objetsCulturels  ObjetCulturel[]
+  gastronomies     Gastronomie[]
+  fetes            Fete[]
+
+  @@map("ethnies")
+}
+
+model Histoire {
+  id          String   @id @default(cuid())
+  titre       String
+  contenu     String   @db.Text
+  periode     String?  // Ex: "XVe - XVIIIe siècle"
+  imageUrl    String?
+  ethnieId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ethnie      Ethnie   @relation(fields: [ethnieId], references: [id], onDelete: Cascade)
+
+  @@map("histoires")
+}
+
+model Rite {
+  id           String   @id @default(cuid())
+  nom          String
+  description  String   @db.Text
+  signification String? @db.Text
+  periode      String?
+  imageUrl     String?
+  videoUrl     String?
+  ethnieId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  ethnie       Ethnie   @relation(fields: [ethnieId], references: [id], onDelete: Cascade)
+
+  @@map("rites")
+}
+
+model ObjetCulturel {
+  id           String   @id @default(cuid())
+  nom          String
+  description  String   @db.Text
+  signification String? @db.Text
+  matiere      String?
+  epoque       String?
+  imageUrl     String?
+  tags         String[] // Pour la reconnaissance IA
+  ethnieId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  ethnie       Ethnie   @relation(fields: [ethnieId], references: [id], onDelete: Cascade)
+
+  @@map("objets_culturels")
+}
+
+model Gastronomie {
+  id           String   @id @default(cuid())
+  nom          String
+  description  String   @db.Text
+  ingredients  String[]
+  preparation  String?  @db.Text
+  occasion     String?
+  imageUrl     String?
+  ethnieId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  ethnie       Ethnie   @relation(fields: [ethnieId], references: [id], onDelete: Cascade)
+
+  @@map("gastronomies")
+}
+
+model Fete {
+  id           String   @id @default(cuid())
+  nom          String
+  description  String   @db.Text
+  periode      String?  // Ex: "Chaque année en août"
+  lieu         String?
+  imageUrl     String?
+  ethnieId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  ethnie       Ethnie   @relation(fields: [ethnieId], references: [id], onDelete: Cascade)
+
+  @@map("fetes")
+}
+
+// ================================================================
+// MODULE 3 : PONT (TRADUCTION & CHAT)
+// ================================================================
+
+model Langue {
+  id          String   @id @default(cuid())
+  code        String   @unique // Ex: "baoule", "dioula", "fr"
+  nom         String
+  nomLocal    String?
+  famille     String?  // Ex: "Kwa", "Mandé"
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  mots              Mot[]
+  traductionsSource Traduction[] @relation("LangueSource")
+  traductionsCible  Traduction[] @relation("LangueCible")
+
+  @@map("langues")
+}
+
+model Mot {
+  id          String   @id @default(cuid())
+  mot         String
+  phonetique  String?
+  categorie   String?  // nom, verbe, adjectif, salutation, etc.
+  langueId    String
+  audioUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  langue      Langue   @relation(fields: [langueId], references: [id])
+
+  @@unique([mot, langueId])
+  @@map("mots")
+}
+
+model Traduction {
+  id              String   @id @default(cuid())
+  texteSource     String   @db.Text
+  texteTraduction String   @db.Text
+  langueSourceId  String
+  langueCibleId   String
+  contexte        String?
+  validee         Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  langueSource    Langue   @relation("LangueSource", fields: [langueSourceId], references: [id])
+  langueCible     Langue   @relation("LangueCible", fields: [langueCibleId], references: [id])
+
+  @@map("traductions")
+}
+
+model CanalDiscussion {
+  id          String   @id @default(cuid())
+  nom         String
+  description String?
+  slug        String   @unique
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  messages    Message[]
+
+  @@map("canaux_discussion")
+}
+
+model Message {
+  id              String   @id @default(cuid())
+  contenu         String   @db.Text
+  langueCode      String   @default("fr")
+  traductions     Json?    // { "fr": "...", "baoule": "..." }
+  audioUrl        String?
+  userId          String
+  canalId         String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User            @relation(fields: [userId], references: [id])
+  canal           CanalDiscussion @relation(fields: [canalId], references: [id])
+
+  @@map("messages")
+}
+
+// ================================================================
+// MODULE 4 : ACADÉMIE (GAMIFICATION)
+// ================================================================
+
+enum NiveauType {
+  GRAIN_DE_SABLE
+  PALMIER
+  BAOBAB
+}
+
+model Niveau {
+  id          String     @id @default(cuid())
+  type        NiveauType @unique
+  nom         String
+  description String?
+  pointsRequis Int       @default(0)
+  imageUrl    String?
+  ordre       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  lecons      Lecon[]
+  progressions ProgressionUtilisateur[]
+
+  @@map("niveaux")
+}
+
+model Lecon {
+  id          String   @id @default(cuid())
+  titre       String
+  description String?
+  contenu     String   @db.Text
+  imageUrl    String?
+  audioUrl    String?
+  pointsGain  Int      @default(10)
+  dureeMin    Int      @default(5)
+  niveauId    String
+  ordre       Int
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  niveau      Niveau   @relation(fields: [niveauId], references: [id])
+  questions   Question[]
+
+  @@map("lecons")
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  enonce      String   @db.Text
+  type        String   @default("choix_multiple") // choix_multiple, vrai_faux, texte_libre
+  imageUrl    String?
+  audioUrl    String?
+  explication String?  @db.Text
+  leconId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  lecon       Lecon    @relation(fields: [leconId], references: [id], onDelete: Cascade)
+  reponses    Reponse[]
+
+  @@map("questions")
+}
+
+model Reponse {
+  id          String   @id @default(cuid())
+  contenu     String
+  estCorrecte Boolean  @default(false)
+  explication String?
+  questionId  String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("reponses")
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  nom         String   @unique
+  description String
+  imageUrl    String?
+  condition   String   // Description de la condition d'obtention
+  pointsBonus Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  // Relations
+  userBadges  UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  obtenuLe  DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+model ProgressionUtilisateur {
+  id              String   @id @default(cuid())
+  userId          String
+  niveauId        String
+  leconId         String?
+  pointsGagnes    Int      @default(0)
+  completee       Boolean  @default(false)
+  scoreQuiz       Int?     // Score en pourcentage
+  tentatives      Int      @default(1)
+  completeeAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User     @relation(fields: [userId], references: [id])
+  niveau          Niveau   @relation(fields: [niveauId], references: [id])
+
+  @@map("progressions_utilisateur")
+}
+
+// ================================================================
+// MODULE 5 : PODCASTS & ONG
+// ================================================================
+
+model Podcast {
+  id          String   @id @default(cuid())
+  titre       String
+  description String   @db.Text
+  audioUrl    String
+  imageUrl    String?
+  dureeSecondes Int?
+  tags        String[]
+  langue      String   @default("fr")
+  views       Int      @default(0)
+  isPublished Boolean  @default(false)
+  auteurId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  auteur      User     @relation(fields: [auteurId], references: [id])
+
+  @@map("podcasts")
+}
+
+model ONG {
+  id          String   @id @default(cuid())
+  nom         String
+  description String   @db.Text
+  mission     String   @db.Text
+  logoUrl     String?
+  siteWeb     String?
+  email       String?
+  telephone   String?
+  localisation String?
+  domaine     String?  // patrimoine, langue, artisanat, etc.
+  isVerified  Boolean  @default(false)
+  responsableId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  responsable User     @relation(fields: [responsableId], references: [id])
+  artisans    Artisan[]
+
+  @@map("ongs")
+}
+
+model Artisan {
+  id          String   @id @default(cuid())
+  nom         String
+  prenom      String?
+  specialite  String
+  description String?  @db.Text
+  photoUrl    String?
+  localisation String?
+  contact     String?
+  ongId       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  ong         ONG?     @relation(fields: [ongId], references: [id])
+
+  @@map("artisans")
+}

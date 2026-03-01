@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dictionnaire Dioula Express</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 10px; }
+        .search-box { width: 100%; padding: 12px; font-size: 18px; margin-bottom: 20px; border: 2px solid #2ecc71; border-radius: 8px; }
+        .result-item { padding: 15px; border-bottom: 1px solid #eee; transition: 0.3s; }
+        .result-item:hover { background: #f9f9f9; }
+        .dioula { color: #27ae60; font-weight: bold; font-size: 1.1em; display: block; }
+        .francais { color: #7f8c8d; font-style: italic; }
+        .count { color: #95a5a6; font-size: 0.9em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Dictionnaire Dioula ߒߞߏ</h2>
+    <div id="counter" class="count"></div>
+    <input type="text" id="search" class="search-box" placeholder="Chercher un mot ou une phrase...">
+    
+    <div id="results"></div>
+
+    <script src="dioula_data.js"></script>
+
+    <script>
+        const searchInput = document.getElementById('search');
+        const resultsDiv = document.getElementById('results');
+        const counterDiv = document.getElementById('counter');
+
+        function displayResults(filter = '') {
+            resultsDiv.innerHTML = '';
+            const filtered = dioulaDatabase.filter(item => 
+                item[0].toLowerCase().includes(filter.toLowerCase()) || 
+                item[1].toLowerCase().includes(filter.toLowerCase())
+            );
+
+            counterDiv.innerText = `${filtered.length} expression(s) trouvée(s)`;
+
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'result-item';
+                div.innerHTML = `
+                    <span class="dioula">${item[0]}</span>
+                    <span class="francais">${item[1]}</span>
+                `;
+                resultsDiv.appendChild(div);
+            });
+        }
+
+        // Écouteur d'événement pour la recherche en temps réel
+        searchInput.addEventListener('input', (e) => {
+            displayResults(e.target.value);
+        });
+
+        // Affichage initial
+        displayResults();
+    </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Nouvelle Palette: L'Âme de l'Éburnie */
+  --color-ivoire-doux: #F5EFE6;
+  --color-noir-profond: #111111;
+  --color-vert-foret: #1B4332;
+  --color-terre-brulee: #9C6644;
+  --color-orange-soleil: #F77F00;
+
+  --color-kente-gold: #C8960C;
+  --color-terracotta: #B8622A;
+  --color-bark: #4A2E1A;
+
+  --font-sans: "Inter", sans-serif;
+  --font-philosopher: "Philosopher", serif;
+  --font-display: "Cormorant Garamond", serif;
+  --font-playfair: "Playfair Display", serif;
+}
+
+/* ── Base ── */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-noir-profond);
+    background-color: var(--color-ivoire-doux);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ─────────────────────────────── */
+/* KENTE STRIPE (divider / accent) */
+/* ─────────────────────────────── */
+.kente-stripe {
+  background: repeating-linear-gradient(90deg,
+      #FF8C00 0px, #FF8C00 5px,
+      #C8960C 5px, #C8960C 10px,
+      #228B22 10px, #228B22 15px,
+      #1C1410 15px, #1C1410 20px,
+      #B8622A 20px, #B8622A 25px);
+}
+
+/* ─────────────────────────────── */
+/* DOT GRID TEXTURE                */
+/* ─────────────────────────────── */
+.dot-texture {
+  background-image: radial-gradient(circle, rgba(200, 150, 12, 0.18) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* ─────────────────────────────── */
+/* GLASS CARD                      */
+/* ─────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* ─────────────────────────────── */
+/* CULTURAL CARD                   */
+/* ─────────────────────────────── */
+.card {
+  background: var(--color-ivoire-doux);
+  border: 1px solid rgba(156, 102, 68, 0.2);
+  /* Terre Brulée */
+  box-shadow: 0 4px 24px rgba(17, 17, 17, 0.04);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  border-radius: 12px;
+  /* Plustot que de gros coins ronds */
+}
+
+.card:hover {
+  box-shadow: 0 12px 32px rgba(17, 17, 17, 0.08);
+  border-color: rgba(156, 102, 68, 0.5);
+  /* Terre Brulée */
+}
+
+/* TRAME DIVIDER (Ligne de tissage) */
+.trame-divider {
+  height: 1px;
+  width: 100%;
+  background: repeating-linear-gradient(90deg,
+      var(--color-terre-brulee) 0px, var(--color-terre-brulee) 4px,
+      transparent 4px, transparent 8px);
+  opacity: 0.3;
+}
+
+/* ─────────────────────────────── */
+/* SUNRISE GRADIENT (flag)         */
+/* ─────────────────────────────── */
+.sunrise-gradient {
+  background: linear-gradient(135deg, #FF8C00 0%, #fff 50%, #228B22 100%);
+}
+
+/* ─────────────────────────────── */
+/* SHIMMER EFFECT                  */
+/* ─────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  animation: shimmer 2.5s infinite;
+}
+
+/* ─────────────────────────────── */
+/* MARQUEE SCROLL                  */
+/* ─────────────────────────────── */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 24s linear infinite;
+}
+
+/* ─────────────────────────────── */
+/* TRADITIONAL FRAME (landing)     */
+/* ─────────────────────────────── */
+.kita-frame {
+  position: absolute;
+  inset: 16px;
+  border: 1.5px solid rgba(200, 150, 12, 0.3);
+  border-radius: 24px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.kita-frame::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(200, 150, 12, 0.15);
+  border-radius: 18px;
+}
+
+/* ─────────────────────────────── */
+/* FADE ENTRANCE                   */
+/* ─────────────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ─────────────────────────────── */
+/* BOTTOM NAV                      */
+/* ─────────────────────────────── */
+.bottom-nav {
+  background: rgba(28, 20, 16, 0.88);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* ─────────────────────────────── */
+/* MOYÉ ASSISTANT — Golden aura    */
+/* ─────────────────────────────── */
+@keyframes moye-glow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.08);
+  }
+}
+
+.moye-glow {
+  animation: moye-glow 3s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 150, 12, 0.3);
+  border-radius: 4px;
+}
+
+/* Barre de navigation du bas : défilable horizontalement sur mobile, scrollbar masquée */
+.bottom-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area pour encoche / barre d'accueil mobile */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}

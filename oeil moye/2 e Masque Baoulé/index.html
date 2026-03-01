@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masque Baoulé - Galerie Interactive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lora', 'Georgia', serif;
+            background: linear-gradient(145deg, #1a2d28 0%, #0f1e1a 50%, #1a2d28 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(45, 90, 61, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 133, 102, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(45, 90, 61, 0.98) 0%, rgba(60, 110, 80, 0.98) 50%, rgba(50, 100, 70, 0.98) 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: drift 15s ease-in-out infinite;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(15px, -15px); }
+        }
+
+        .header h1 {
+            font-family: 'Crimson Text', 'Garamond', serif;
+            font-size: 2.8em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            padding: 45px;
+        }
+
+        .gallery-section {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 6px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+            background: #f5f5f5;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: zoom-in;
+            display: block;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.06);
+        }
+
+        .image-counter {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 13px 24px;
+            border: none;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #2d5a3d 0%, #3d7a52 100%);
+            color: white;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+            min-width: 130px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            transition: left 0.4s ease;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #3d7a52 0%, #4a8566 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 90, 61, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .description-section {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .description-box {
+            background: #fafafa;
+            padding: 28px;
+            border-radius: 6px;
+            border-left: 4px solid #2d5a3d;
+            overflow-y: auto;
+            max-height: 620px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .description-box h2 {
+            color: #2d5a3d;
+            margin-bottom: 18px;
+            font-size: 1.5em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .description-box h3 {
+            color: #3d7a52;
+            margin-top: 22px;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .description-box p {
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 14px;
+            text-align: justify;
+            font-size: 0.95em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 18px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            flex: 0 1 auto;
+            min-width: auto;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .tab-btn:hover {
+            color: #2d5a3d;
+            background: rgba(45, 90, 61, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #2d5a3d;
+            border-bottom-color: #2d5a3d;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slideshow-indicator {
+            text-align: center;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-size: 0.88em;
+            color: #666;
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #ccc;
+        }
+
+        .dot.active {
+            background: #2d5a3d;
+            transform: scale(1.3);
+            border-color: #2d5a3d;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+                padding: 25px;
+            }
+
+            .image-container img {
+                height: 300px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .description-box {
+                max-height: 400px;
+            }
+        }
+
+        .modal-fullscreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-fullscreen.active {
+            display: flex;
+        }
+
+        .modal-fullscreen img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            opacity: 0.7;
+        }
+
+        ul {
+            margin-left: 20px;
+            line-height: 2;
+            color: #444;
+        }
+
+        strong {
+            color: #333;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Masque Baoulé Ndoma</h1>
+            <p>Galerie de Beauté et d'Élégance</p>
+        </div>
+
+        <div class="content">
+            <div class="gallery-section">
+                <div class="image-container" id="imageContainer">
+                    <img id="mainImage" src="Princi.jpg" alt="Image principale">
+                    <div class="image-counter">
+                        <span id="currentImage">1</span> / <span id="totalImages">5</span>
+                    </div>
+                </div>
+
+                <div class="slideshow-indicator">
+                    <div class="dots" id="dotsContainer"></div>
+                </div>
+
+                <div class="controls">
+                    <button onclick="previousImage()">← Précédent</button>
+                    <button id="playstBtn" onclick="toggleSlideshow()">▶ Diaporama</button>
+                    <button onclick="nextImage()">Suivant →</button>
+                </div>
+
+                <div class="controls">
+                    <button onclick="toggleFullscreen()"> Plein écran</button>
+                    <button onclick="randomImage()"> Aléatoire</button>
+                </div>
+            </div>
+
+            <div class="description-section">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('description')">Description</button>
+                    <button class="tab-btn" onclick="switchTab('infos')">Infos Patrimoniales</button>
+                </div>
+
+                <div id="description" class="tab-content active description-box">
+                    <h2>Présentation</h2>
+                    <h3>Identification</h3>
+                    <p>Ce masque appartient au peuple Baoulé, l'une des ethnies les plus importantes de Côte d'Ivoire, installée dans le centre du pays. Il s'agit du masque Ndoma, un masque de portrait lié aux cérémonies de divertissement et d'hommage aux personnes de grande valeur sociale.</p>
+
+                    <h3>Description physique</h3>
+                    <p><strong>Forme générale :</strong> Le masque présente une forme ovale allongée et harmonieuse, avec un visage central noir brillant encadré d'un large pourtour en bois clair (bois naturel non peint) de forme elliptique, décoré de motifs géométriques gravés.</p>
+                    
+                    <p><strong>Le visage :</strong> Il est d'une beauté classique et sereine, typique de l'esthétique Baoulé : front haut et bombé orné de scarifications horizontales gravées, sourcils en arc finement tracés, yeux en amande mi-clos à l'expression calme et introspective, nez fin et droit, bouche légèrement entrouverte aux lèvres sensuelles.</p>
+                    
+                    <p><strong>Scarifications :</strong> Des scarifications en éventail de chaque côté des commissures des lèvres — symbole d'appartenance ethnique et de beauté.</p>
+
+                    <h3>Signification et rôle</h3>
+                    <p>Le masque Baoulé de ce type est avant tout un masque de beauté et d'élégance. Il intervenait lors des fêtes de divertissement "Ndoma" pour célébrer des personnes admirées pour leur beauté, leur courage ou leur générosité, des cérémonies funéraires pour honorer les défunts de rang élevé, et des rituels d'hommage aux esprits protecteurs du village.</p>
+                </div>
+
+                <div id="infos" class="tab-content description-box">
+                    <h2>Valeur Patrimoniale</h2>
+                    <p>Ce masque, par la qualité de sa sculpture, la finesse de ses détails et sa patine d'usage authentique, représente une pièce de collection de premier ordre.</p>
+
+                    <h3>Collections Internationales</h3>
+                    <p>Des œuvres similaires sont conservées au :</p>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li><strong>Musée du quai Branly – Jacques Chirac</strong> (Paris)</li>
+                        <li><strong>Metropolitan Museum of Art</strong> (New York)</li>
+                        <li><strong>Musée des Civilisations de Côte d'Ivoire</strong> (Abidjan)</li>
+                    </ul>
+
+                    <h3> Données</h3>
+                    <p><strong>Peuple :</strong> Baoulé (Côte d'Ivoire - région centrale)</p>
+                    <p><strong>Type :</strong> Masque de portrait - beauté et prestige</p>
+                    <p><strong>Matériau :</strong> Bois (noir et clair), patine authentique</p>
+                    <p><strong>Fonction :</strong> Cérémonies, divertissement, hommage</p>
+                    <p><strong>Porteur :</strong> Homme incarnant l'idéal féminin</p>
+
+                    <h3>Caractéristiques uniques</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>Dualité bois noir / bois clair</li>
+                        <li>Formes courbes harmonieuses</li>
+                        <li>Scarifications délicates</li>
+                        <li>Expression introspective sereine</li>
+                        <li>Composition symétrique</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-fullscreen" id="fullscreenModal">
+        <span class="modal-close" onclick="toggleFullscreen()">&times;</span>
+        <img id="fullscreenImage" src="" alt="Plein écran">
+    </div>
+
+    <script>
+        const images = [
+            'Princi.jpg',
+            '6tir.jpg',
+            'Quartri.jpg',
+            'Sécondaire.jpg',
+            'Terti.jpg'
+        ];
+
+        let currentIndex = 0;
+        let isSlideshow = false;
+        let slideshowInterval;
+
+        function initDots() {
+            const dotsContainer = document.getElementById('dotsContainer');
+            dotsContainer.innerHTML = '';
+            images.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (index === 0 ? ' active' : '');
+                dot.onclick = () => goToImage(index);
+                dotsContainer.appendChild(dot);
+            });
+            document.getElementById('totalImages').textContent = images.length;
+        }
+
+        function updateImage() {
+            document.getElementById('mainImage').src = images[currentIndex];
+            document.getElementById('fullscreenImage').src = images[currentIndex];
+            document.getElementById('currentImage').textContent = currentIndex + 1;
+            updateDots();
+        }
+
+        function updateDots() {
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % images.length;
+            updateImage();
+        }
+
+        function previousImage() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateImage();
+        }
+
+        function goToImage(index) {
+            currentIndex = index;
+            updateImage();
+        }
+
+        function randomImage() {
+            currentIndex = Math.floor(Math.random() * images.length);
+            updateImage();
+        }
+
+        function toggleSlideshow() {
+            isSlideshow = !isSlideshow;
+            const btn = document.getElementById('playstBtn');
+            
+            if (isSlideshow) {
+                btn.textContent = '⏸ Pause';
+                slideshowInterval = setInterval(nextImage, 3000);
+            } else {
+                btn.textContent = '▶ Diaporama';
+                clearInterval(slideshowInterval);
+            }
+        }
+
+        function toggleFullscreen() {
+            const modal = document.getElementById('fullscreenModal');
+            modal.classList.toggle('active');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') previousImage();
+            if (e.key === ' ') {
+                e.preventDefault();
+                toggleSlideshow();
+            }
+            if (e.key === 'Escape') {
+                if (document.getElementById('fullscreenModal').classList.contains('active')) {
+                    toggleFullscreen();
+                }
+            }
+        });
+
+        window.addEventListener('load', () => {
+            initDots();
+            updateImage();
+        });
+    </script>
+</body>
+</html>
