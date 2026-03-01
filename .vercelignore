@@ -1,0 +1,10 @@
+backend/
+oeil moye/
+dioula_data/
+prototype-chatbot-simulation/
+data_mask/
+.git
+README.md
+DEPLOYMENT_GUIDE.md
+docker-compose.yml
+nginx.conf
