@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masque Dan Kagle - Galerie Interactive</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Lora:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lora', 'Georgia', serif;
+            background: linear-gradient(145deg, #2a1515 0%, #1a0d0d 50%, #2a1515 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139, 26, 26, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 30, 30, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(139, 26, 26, 0.98) 0%, rgba(170, 32, 32, 0.98) 50%, rgba(155, 28, 28, 0.98) 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: drift 15s ease-in-out infinite;
+        }
+
+        @keyframes drift {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(15px, -15px);
+            }
+        }
+
+        .header h1 {
+            font-family: 'Crimson Text', 'Garamond', serif;
+            font-size: 2.8em;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            padding: 45px;
+        }
+
+        .gallery-section {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 6px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+            background: #f5f5f5;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: zoom-in;
+            display: block;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.06);
+        }
+
+        .image-counter {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 13px 24px;
+            border: none;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #8b1a1a 0%, #b01e1e 100%);
+            color: white;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+            min-width: 130px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            transition: left 0.4s ease;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #b01e1e 0%, #d41e1e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 26, 26, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .description-section {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .description-box {
+            background: #fafafa;
+            padding: 28px;
+            border-radius: 6px;
+            border-left: 4px solid #8b1a1a;
+            overflow-y: auto;
+            max-height: 620px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .description-box h2 {
+            color: #8b1a1a;
+            margin-bottom: 18px;
+            font-size: 1.5em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .description-box h3 {
+            color: #b01e1e;
+            margin-top: 22px;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .description-box p {
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 14px;
+            text-align: justify;
+            font-size: 0.95em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 18px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            flex: 0 1 auto;
+            min-width: auto;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .tab-btn:hover {
+            color: #8b1a1a;
+            background: rgba(139, 26, 26, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #8b1a1a;
+            border-bottom-color: #8b1a1a;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .slideshow-indicator {
+            text-align: center;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-size: 0.88em;
+            color: #666;
+        }
+
+        .dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #ccc;
+        }
+
+        .dot.active {
+            background: #8b1a1a;
+            transform: scale(1.3);
+            border-color: #8b1a1a;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+                padding: 25px;
+            }
+
+            .image-container img {
+                height: 300px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .description-box {
+                max-height: 400px;
+            }
+        }
+
+        .modal-fullscreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-fullscreen.active {
+            display: flex;
+        }
+
+        .modal-fullscreen img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            opacity: 0.7;
+        }
+
+        ul {
+            margin-left: 20px;
+            line-height: 2;
+            color: #444;
+        }
+
+        strong {
+            color: #333;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Masque Dan Kagle</h1>
+            <p>Galerie du Masque de Feu - Pouvoir et Justice</p>
+        </div>
+
+        <div class="content">
+            <div class="gallery-section">
+                <div class="image-container" id="imageContainer">
+                    <img id="mainImage" src="Masque Principale.jpg" alt="Image principale">
+                    <div class="image-counter">
+                        <span id="currentImage">1</span> / <span id="totalImages">4</span>
+                    </div>
+                </div>
+
+                <div class="slideshow-indicator">
+                    <div class="dots" id="dotsContainer"></div>
+                </div>
+
+                <div class="controls">
+                    <button onclick="previousImage()"> Précédent</button>
+                    <button id="playstBtn" onclick="toggleSlideshow()"> Diaporama</button>
+                    <button onclick="nextImage()">Suivant</button>
+                </div>
+
+                <div class="controls">
+                    <button onclick="toggleFullscreen()"> Plein écran</button>
+                    <button onclick="randomImage()">Aléatoire</button>
+                </div>
+            </div>
+
+            <div class="description-section">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('description')">Description</button>
+                    <button class="tab-btn" onclick="switchTab('infos')">Patrimoine</button>
+                </div>
+
+                <div id="description" class="tab-content active description-box">
+                    <h2>Présentation</h2>
+                    <h3>Identification</h3>
+                    <p>Ce masque se nomme Kagle. C'est le masque de guerre le plus puissant et le plus redouté du peuple
+                        Wé-Guéré (ou Kran/Grebo) de l'ouest de la Côte d'Ivoire. Le Kagle est considéré comme un masque
+                        "de feu" — littéralement un masque qui "dévore" ses ennemis.</p>
+
+                    <h3>Signature distinctive</h3>
+                    <p>Les crocs et défenses que l'on voit si distinctement sur ce masque sont sa marque de fabrique
+                        absolue — aucun autre masque africain ne présente cette configuration de défenses multiples de
+                        façon aussi caractéristique.</p>
+
+                    <h3>Description physique</h3>
+                    <p><strong>Forme générale :</strong> Le masque présente une structure frontale rectangulaire et
+                        massive, avec un visage à la géométrie volontairement brutale et asymétrique, encadré d'une
+                        couronne de tissu noir tressé et capitonné au sommet, et de raphia, fibres végétales sèches et
+                        cornes animales sur les côtés et en bas.</p>
+
+                    <p><strong>La couronne :</strong> Le sommet est ceint d'un bourrelet de tissu noir épais et
+                        rembourré, cousu en segments superposés comme une couronne royale sombre. Des clous métalliques
+                        ponctuent cette bordure supérieure.</p>
+
+                    <h3>Signification et rôle</h3>
+                    <p>Ce masque est un instrument de pouvoir absolu dans sa société d'origine. Il intervenait lors des
+                        préparatifs et rituels de guerre, des cérémonies de justice pour les crimes les plus graves, des
+                        rites d'initiation masculine, des funérailles de grands guerriers, et des exorcismes et
+                        purifications de villages.</p>
+                </div>
+
+                <div id="infos" class="tab-content description-box">
+                    <h2>Valeur Patrimoniale</h2>
+                    <p>La complexité de ce masque — bois sculpté, métal, ivoire ou os, tissu, fibres végétales, cornes —
+                        en fait un objet composite de très haute valeur ethnographique et artistique.</p>
+
+                    <h3>Collections Internationales</h3>
+                    <p>Des pièces comparables figurent dans les collections permanentes de :</p>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li><strong>Musée du quai Branly</strong> (Paris)</li>
+                        <li><strong>Smithsonian National Museum of African Art</strong> (Washington)</li>
+                        <li><strong>Rietberg Museum</strong> (Zurich)</li>
+                    </ul>
+
+                    <h3> Données</h3>
+                    <p><strong>Peuple :</strong> Wé-Guéré / Kran-Grebo (Côte d'Ivoire occidentale)</p>
+                    <p><strong>Type :</strong> Masque de guerre et de justice</p>
+                    <p><strong>Matériaux :</strong> Bois, métal, tissu, raphia, cornes, ivoire/os</p>
+                    <p><strong>Fonction :</strong> Guerre, justice, initiation, funérailles, rituals</p>
+
+                    <h3>Caractéristiques d'authenticité</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>Crocs et défenses multiples distinctifs</li>
+                        <li>Structure asymétrique brutale</li>
+                        <li>Couronne capitonnée noire</li>
+                        <li>Clous métalliques renforcés</li>
+                        <li>Intégrité des éléments composites</li>
+                        <li>Patine d'ancienneté certaine</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-fullscreen" id="fullscreenModal">
+        <span class="modal-close" onclick="toggleFullscreen()">&times;</span>
+        <img id="fullscreenImage" src="" alt="Plein écran">
+    </div>
+
+    <script>
+        const images = [
+            'Masque Principale.jpg',
+            '23 3.jpg',
+            'Sécond.jpg',
+            'Sécded.jpg'
+        ];
+
+        let currentIndex = 0;
+        let isSlideshow = false;
+        let slideshowInterval;
+
+        function initDots() {
+            const dotsContainer = document.getElementById('dotsContainer');
+            dotsContainer.innerHTML = '';
+            images.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (index === 0 ? ' active' : '');
+                dot.onclick = () => goToImage(index);
+                dotsContainer.appendChild(dot);
+            });
+            document.getElementById('totalImages').textContent = images.length;
+        }
+
+        function updateImage() {
+            document.getElementById('mainImage').src = images[currentIndex];
+            document.getElementById('fullscreenImage').src = images[currentIndex];
+            document.getElementById('currentImage').textContent = currentIndex + 1;
+            updateDots();
+        }
+
+        function updateDots() {
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % images.length;
+            updateImage();
+        }
+
+        function previousImage() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateImage();
+        }
+
+        function goToImage(index) {
+            currentIndex = index;
+            updateImage();
+        }
+
+        function randomImage() {
+            currentIndex = Math.floor(Math.random() * images.length);
+            updateImage();
+        }
+
+        function toggleSlideshow() {
+            isSlideshow = !isSlideshow;
+            const btn = document.getElementById('playstBtn');
+
+            if (isSlideshow) {
+                btn.textContent = '⏸ Pause';
+                slideshowInterval = setInterval(nextImage, 3000);
+            } else {
+                btn.textContent = '▶ Diaporama';
+                clearInterval(slideshowInterval);
+            }
+        }
+
+        function toggleFullscreen() {
+            const modal = document.getElementById('fullscreenModal');
+            modal.classList.toggle('active');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') previousImage();
+            if (e.key === ' ') {
+                e.preventDefault();
+                toggleSlideshow();
+            }
+            if (e.key === 'Escape') {
+                if (document.getElementById('fullscreenModal').classList.contains('active')) {
+                    toggleFullscreen();
+                }
+            }
+        });
+
+        window.addEventListener('load', () => {
+            initDots();
+            updateImage();
+        });
+    </script>
+</body>
+
+</html>

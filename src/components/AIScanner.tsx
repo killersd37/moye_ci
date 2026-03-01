@@ -199,7 +199,7 @@ export const AIScanner = ({
     await new Promise<void>((res) => setTimeout(() => res(), 10000));
     setPhase({ type: 'redirecting', slug });
     setTimeout(() => {
-      const siteUrl = `/oeil%20moye/${encodeURIComponent(Object.entries(SITES).find(([k]) => k === slug)?.[1]?.label || '')}/index.html`;
+      const siteUrl = `/oeil-moye/${encodeURIComponent(Object.entries(SITES).find(([k]) => k === slug)?.[1]?.label || '')}/index.html`;
       if (onCulturalSiteMatch) onCulturalSiteMatch(slug, siteUrl);
     }, 1500);
   };

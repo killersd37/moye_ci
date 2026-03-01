@@ -829,7 +829,7 @@ export default function App() {
             {/* actual HTML site */}
             <iframe
               key={activeCulturalSiteUrl}
-              src={activeCulturalSiteUrl || `/moye/${activeCulturalSite}/`}
+              src={activeCulturalSiteUrl || `/oeil-moye/${activeCulturalSite}/index.html`}
               className="flex-1 w-full border-0"
               title="Site culturel"
               allow="fullscreen"
