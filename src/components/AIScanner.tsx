@@ -208,8 +208,9 @@ export const AIScanner = ({
     setPhase({ type: 'analyzing' });
     try {
       const base64 = imageData.includes(',') ? imageData.split(',')[1] : imageData;
+      const backendUrl = import.meta.env.VITE_MOYE_API_URL || 'http://localhost:4000';
       const [result] = await Promise.all([
-        fetch('/api/identify', {
+        fetch(`${backendUrl}/api/v1/scanner/identify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64 }),

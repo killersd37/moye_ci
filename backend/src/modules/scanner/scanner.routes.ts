@@ -5,6 +5,44 @@ import { optionalAuthenticate } from '../../middlewares/authenticate';
 
 const router = Router();
 
+// Site definitions for scanner identification
+const SITES: Record<string, { label: string; slug: string }> = {
+  'bete': { label: 'Masque Bété Gla', slug: 'bete' },
+  'baoule': { label: 'Masque Baoulé', slug: 'baoule' },
+  'dan-kagle': { label: 'Masque Dan Kagle', slug: 'dan-kagle' },
+  'dida': { label: 'Pagne Dida', slug: 'dida' },
+  'pont-liane': { label: 'Pont de Liane', slug: 'pont-liane' },
+};
+
+// POST /scanner/identify - Basic cultural artifact identification
+router.post('/identify', async (req, res) => {
+  try {
+    const { image } = req.body as { image?: string };
+
+    if (!image) {
+      res.status(400).json({ error: 'Missing image field (base64 string)' });
+      return;
+    }
+
+    // Simple random matching for demo
+    // In production: would use image fingerprinting or ML model
+    const slugs = Object.keys(SITES);
+    const randomSlug = slugs[Math.floor(Math.random() * slugs.length)];
+    const slugInfo = SITES[randomSlug];
+    const url = `/oeil-moye/${encodeURIComponent(slugInfo.label)}/index.html`;
+
+    res.json({
+      found: true,
+      slug: randomSlug,
+      label: slugInfo.label,
+      url,
+    });
+  } catch (err) {
+    console.error('Scanner identify error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // POST /scanner/analyser-image - Scanner et reconnaître un objet culturel
 router.post('/analyser-image', optionalAuthenticate, uploadMemory.single('image'), async (req, res) => {
     if (!req.file) {
